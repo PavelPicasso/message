@@ -1,4 +1,0 @@
-<?php
-define("VK_CONFIRMATION_CODE", "739991e5");
-define("VK_SECRET_TOKEN", "secretASKIdji121ENOh57aj");
-define("VK_TOKEN", "53d9a7d291d2291ea25a06a228238d7e133615d8560b0c3f92ad67b42a5c0184a2e7cdc33c3fc29e115bd");

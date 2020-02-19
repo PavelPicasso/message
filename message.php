@@ -8,10 +8,10 @@ class Message {
             'user_id' => $id,
             'message' =>  $request,
             'access_token' => VK_TOKEN,
-            'v' => '5,69'
+            'v' => '5.59'
         );
         file_get_contents('https://api.vk.com/method/messages.send?' . http_build_query($request_params));
-        echo 'ok';
+        echo 'ok'; 
     }
 
 }

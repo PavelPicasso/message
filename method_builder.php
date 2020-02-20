@@ -6,7 +6,7 @@ require("LImageHandler.php");
 
 Class Method_builder{
 
-    public function extract_true_tr_from_garbage($s) {
+    public function extractTrueTrFromGarbage($s) {
         $tr_starting_pos = strpos($s, "<tr>");
         $tr_closing_pos = strpos($s, "</TR>");
         return substr($s, $tr_starting_pos + 4, $tr_closing_pos - $tr_starting_pos - 5);
@@ -53,13 +53,13 @@ Class Method_builder{
     $pattern = "#<p>(\s|&nbsp;|</?\s?br\s?/?>)*</?p>#";
     if (preg_match($pattern, $htmlBlob) == 1) {
         $htmlBlob = preg_replace($pattern, '', $htmlBlob);
-        return removeHTMLTagsWithNoContent($htmlBlob);
+        return $this->removeHTMLTagsWithNoContent($htmlBlob);
     } else {
         return '';
     }
 }
 
-    public function currentweektype(){
+    public function currentWeekType(){
         $today = date_create(date('Y-m-d'));
         $studyBeginning = date_create('2020-02-03'); // Дата начала учебы
         $interval = date_diff($today, $studyBeginning);
@@ -84,7 +84,7 @@ Class Method_builder{
                 if ($day == "Воскресенье"){
                     $answer = "&#9654;Совет дня\n\nСегодня выходной!)";
                 } else {
-                    $answer = "&#9654;Сейчас ".$flag." неделя\n\n".$this->printSchedule_day($day, $group, $flag);
+                    $answer = "&#9654;Сейчас ".$flag." неделя\n\n".$this->printScheduleDay($day, $group, $flag);
                 }
                 return $answer;
 
@@ -94,7 +94,7 @@ Class Method_builder{
                  if ($this->convertDayEng(date('l',$day)) == "Воскресенье"){
                     return "Завтра выходной!";
                 }
-                return  "&#9654;Завтра\n\n".$this->printSchedule_day($this->convertDayEng(date('l',$day)), $group, $flag);
+                return  "&#9654;Завтра\n\n".$this->printScheduleDay($this->convertDayEng(date('l',$day)), $group, $flag);
 
             case "на послезавтра":
             case "послезавтра":
@@ -102,24 +102,29 @@ Class Method_builder{
                  if ($this->convertDayEng(date('l',$day)) == "Воскресенье"){
                     return "Послезавтра выходной!";
                 }
-                return  "&#9654;Послезавтра\n\n".$this->printSchedule_day($this->convertDayEng(date('l',$day)), $group, $flag);
+                return  "&#9654;Послезавтра\n\n".$this->printScheduleDay($this->convertDayEng(date('l',$day)), $group, $flag);
           
             case "на неделю":
             case "неделя":
-                 return  "&#9654;Расписание " . $flag . " недели:\n\n".$this->printSchedule_week($id, $group, $flag);
+                 return  "&#9654;Расписание " . $flag . " недели:\n\n".$this->printScheduleWeek($id, $group, $flag);
           
             case "на 1 неделю":
             case "1 неделя":
             case "1":
-                    return  "&#9654;Расписание 1 недели:\n\n".$this->printSchedule_week($id, $group, 1);
+                    return  "&#9654;Расписание 1 недели:\n\n".$this->printScheduleWeek($id, $group, 1);
             
             case "на 2 неделю":
             case "2 неделя":
             case "2":
-                    return  "&#9654;Расписание 2 недели:\n\n".$this->printSchedule_week($id, $group, 2);
+                    return  "&#9654;Расписание 2 недели:\n\n".$this->printScheduleWeek($id, $group, 2);
+
+           case "help":
+            case "помощь":
+            case "команды":
+                    return  "&#128204; Текущие команды:\n\n1&#8419;Моя группа Название группы\nУстанавливает текущую группу\n2&#8419;на день/на сегодня/сегодня\nВозвращает пары на текущий день\n3&#8419;на завтра/завтра\nВозвращает пары на завтра\n4&#8419;на послезавтра/послезавтра\nВозвразает пары на послезавтра\n5&#8419;на неделю/неделя\nВозвразает пары на текущую неделю\n6&#8419;на 1 неделю/1 неделя/1\nВозвразает пары на первую неделю\n7&#8419;на 2 неделю/2 неделя/2\nВозвразает пары на вторую неделю";
 
             default:
-                return "&#9999;Что я могу\n1&#8419;Возвращать пары на сегодня/завтра/послезавтра\n2&#8419;Возвращать пары на неделю/на 1 неделю/на 2 неделю\n3&#8419;Моя группа (Название группы)\n4&#8419;&#128293;В разработке&#128293;";
+                    return "&#9999;Что я могу\n1&#8419;Узнай команды написав: help/помощь/команды\n2&#8419;Возвращать пары на сегодня/завтра/послезавтра\n3&#8419;Возвращать пары на неделю/на 1 неделю/на 2 неделю\n4&#8419;Моя группа (Название группы)\n5&#8419;Возвращать сайт\n6&#8419;&#128293;В разработке&#128293;";
         }
     }
   
@@ -220,14 +225,14 @@ Class Method_builder{
     return $result;
 }
   
-    public function printSchedule_day($day, $group, $flag){
+    public function printScheduleDay($day, $group, $flag){
         $target = file_get_contents('./group/'.$this->translit($group).'/schedule.html');
 
         $table = str_get_html($target);
         foreach($table->find('tr') as $element){
             $table_day = strip_tags($element->find('td p', 0));
             if ($day === $table_day) {
-                $pair = $this->extract_true_tr_from_garbage($element);
+                $pair = $this->extractTrueTrFromGarbage($element);
                 
                 if ($flag == 1) {
                     $week .= $this->entityIdentificationPair($pair);               
@@ -247,8 +252,7 @@ Class Method_builder{
     }
 
   
-    public function translit($value)
-{
+    public function translit($value) {
 	$converter = array(
 		'а' => 'a',    'б' => 'b',    'в' => 'v',    'г' => 'g',    'д' => 'd',
 		'е' => 'e',    'ё' => 'e',    'ж' => 'zh',   'з' => 'z',    'и' => 'i',
@@ -271,130 +275,114 @@ Class Method_builder{
 	return $value;
 }
   
-    public function entityIdentificationPair_def($pair) {
-    $result = "";
-    foreach(str_get_html($pair)->find('p') as $item) {
-        if($search >= 1) {
-            if($item->innertext && trim($item->innertext) != '_') {
-                $item->innertext = "\n" . $search . " " . $item->innertext;
-            } else {
-                $item->innertext = '';
-                $item = $this->removeHTMLTagsWithNoContent($item);
+  public function entityIdentificationPair_def($pair) {
+        $result = "";
+        foreach(str_get_html($pair)->find('p') as $item) {
+            if($search >= 1) {
+                if($item->innertext && trim($item->innertext) != '_') {
+                    $item->innertext = "\n" . $search . " " . $item->innertext;
+                } else {
+                    $item->innertext = '';
+                    $item = $this->removeHTMLTagsWithNoContent($item);
+                }
             }
+            $search++;
+            $result .= $item;
         }
-        $search++;
-        $result .= $item;
+        return $result;
     }
-    return $result;
-}
   
-    public function printSchedule_week($id, $group, $flag) {
-          $query_builder = new Query_builder();
-           $result = $query_builder->select("user", 'week', 'user_id = "' . $id . '" LIMIT 1');
+  public function draWeek($table, $start, $finish, $name, $group) {
+        $x = 0;
+        $y = 0; 
+        // Создаем экземпляр класса LImageHandler
+        $ih = new LImageHandler;
+        // // Подключаем выбранный шрифт текста
+        $fontPath = './OpenSans-Bold.ttf';
+        // Путь к оригинальному изображению
+        $imagePath = './template.jpg';
+        // Указываем размер шрифта 
+        $fontSize = 16;
+        
+        // Задаем цвет
+        $colorArray = array(255, 255, 255);
+        
+        $position = array(
+            0 => LImageHandler::CORNER_LEFT_TOP,
+            1 => LImageHandler::CORNER_CENTER_TOP,
+            2 => LImageHandler::CORNER_RIGHT_TOP,
+            3 => LImageHandler::CORNER_LEFT_BOTTOM,
+            4 => LImageHandler::CORNER_CENTER_BOTTOM,
+            5 => LImageHandler::CORNER_RIGHT_BOTTOM,
+        );
+        $i = 0;
+        $passFirstRow = 0;
+        foreach($table->find('tr') as $element) {
+            
+            if($passFirstRow >= $start && $passFirstRow <= $finish) {
+                $pair = $this->extractTrueTrFromGarbage($element);
 
-          if(empty($result)){
-              return $result[0][0];
-          }else{
-            return "почему то не ресует, хотя на локалке работает";  
-            $x = -780;
-              $y = -600; 
-              // Создаем экземпляр класса LImageHandler
-              $ih = new LImageHandler;
-              // // Подключаем выбранный шрифт текста
-              $fontPath = './OpenSans-Bold.ttf';
-              // Путь к оригинальному изображению
-              $imagePath = './template.jpg';
-              // Указываем размер шрифта 
-              $fontSize = 16;
-              
-              // Задаем цвет
-              $colorArray = array(255, 255, 255);
-              
-              $position = array(
-                  0 => LImageHandler::CORNER_LEFT_TOP,
-                  1 => LImageHandler::CORNER_CENTER_TOP,
-                  2 => LImageHandler::CORNER_RIGHT_TOP,
-              );
-              $i = 0;
-              $passFirstRow = 0;
-              $target = file_get_contents('./group/'.$this->translit($group).'/schedule.html');
-              $table = str_get_html($target);
-    
-            switch ($flag) {
-                case 1:
-                    foreach($table->find('tr') as $element){
-                        if($passFirstRow >= 2 && $passFirstRow <= 7) {
-                            $pair = $this->extract_true_tr_from_garbage($element);
-                            
-                            $week = "\n" . str_replace("<br>", "\n", $this->entityIdentificationPair_def($pair));
-                          
-                            // Загружаем изображение
-                            if($passFirstRow == 2) {
-                                $imgObj = $ih->load($imagePath);
-                            } else {
-                                $imgObj = $ih->load("./group/" . $this->translit($group) . "/week.jpg");
-                            }
-    
-                            if($passFirstRow == 5) {
-                                $y += 700;
-                                $i = 0;
-                            }
-                          
-                            if ($i == 1) {
-                                $imgObj->text(strip_tags($week), $fontPath, $fontSize, $colorArray, $position[$i], $x + 800, $y + (300 * 2));
-                            } else {
-                              if($passFirstRow == 7) {
-                                    $imgObj->text(strip_tags($week), $fontPath, $fontSize, $colorArray, $position[$i], $x + 800, $y + 500);
-                              } else {
-                                    $imgObj->text(strip_tags($week), $fontPath, $fontSize, $colorArray, $position[$i], $x + 800, $y + 300)
-                              }
-                            $i++;
-                            $imgObj->save("./group/" . $this->translit($group) . "/week.jpg");
-                        }
-                        $passFirstRow++;
+                $week = "\n" . str_replace("<br>", "\n", $this->entityIdentificationPair_def($pair));
+
+                // Загружаем изображение
+                if($passFirstRow == $start) {
+                    $imgObj = $ih->load($imagePath);
+                    $y -= ceil(strlen($week) / 2);
+                } else {
+                    $imgObj = $ih->load("./group/IVTAPbd-41/" . $name . ".jpg");
+                    if($i == 1) {
+                        $y = -ceil(strlen($week) / 2);
                     }
-                    break;
-                case 2:
-                    foreach($table->find('tr') as $element){
-                        if($passFirstRow >= 11 && $passFirstRow <= 16) {
-                            $pair = $this->extract_true_tr_from_garbage($element);
-                            
-                            $week = "\n" . str_replace("<br>", "\n", $this->entityIdentificationPair_def($pair));
-    
-                            // Загружаем изображение
-                            if($passFirstRow == 11) {
-                                $imgObj = $ih->load($imagePath);
-                            } else {
-                                $imgObj = $ih->load("./group/" . $this->translit($group) . "/week.jpg");
-                            }
-    
-                            if($passFirstRow == 5) {
-                                $y += 700;
-                                $i = 0;
-                            }
-                            if ($i == 1) {
-                                $imgObj->text(strip_tags($week), $fontPath, $fontSize, $colorArray, $position[$i], $x + 800, $y + (300 * 2));
-                            } else {
-                                if($passFirstRow == 7)
-                                    $imgObj->text(strip_tags($week), $fontPath, $fontSize, $colorArray, $position[$i], $x + 800, $y + 500);
-                                else
-                                    $imgObj->text(strip_tags($week), $fontPath, $fontSize, $colorArray, $position[$i], $x + 800, $y + 300);
-                            }
-                            $i++;
-                            $imgObj->save("./group/" . $this->translit($group) . "/week.jpg");
-                        }
-                        $passFirstRow++;
+                    if($i == 2) {
+                        $y = -ceil(strlen($week) / 2);
                     }
-                    break;
+                }
+
+                if($passFirstRow == ceil(($start + $finish) / 2)) {
+                    $y = 0;
+                    $y += 700;
+                }
+                $imgObj->text(strip_tags($week), $fontPath, $fontSize, $colorArray, $position[$i], $x, $y);
+                $i++;
+                $imgObj->save("./group/IVTAPbd-41/" . $name . ".jpg");
             }
-            
-           $url = "http://a323177.mcdir.ru/group/" . $this->translit($group) . "/week.jpg";
-           $array = array(
-                'week' =>  $url
-           );
-            
-          $query_builder->update("user", $array, "user_id = " .$id);
-          return $url;
+            $passFirstRow++;
+        }
+        $url = "http://a323177.mcdir.ru/group/" . $this->translit($group) . "/" . $name . ".jpg";
+        return $url;
+    }
+  
+    public function printScheduleWeek($id, $group, $flag) {
+          $target = file_get_contents('./group/'.$this->translit($group).'/schedule.html');
+          $table = str_get_html($target);
+          $query_builder = new Query_builder();
+          if($flag == 1) {
+              $start = 2;
+              $finish = 7;
+              $result = $query_builder->select("user", 'first_week', 'user_id = "' . $id . '" LIMIT 1');
+          }
+         if($flag == 2) {
+            $start = 11;
+            $finish = 16;
+            $result = $query_builder->select("user", 'second_week', 'user_id = "' . $id . '" LIMIT 1');
+          }
+      
+      if(empty($result)){
+            return $result[0][0];
+      }else { 
+             $url = $this->draWeek($table, $start, $finish, "week-" . $flag, $group);
+        
+              if($flag == 1) {
+                    $array = array(
+                        'first_week' =>  $url
+                     );
+              } else {
+                    $array = array(
+                      'second_week' =>  $url
+                   );
+              }
+            $query_builder->update("user", $array, "user_id = " .$id);
+             return $url;
       }
     }
 }

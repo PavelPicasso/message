@@ -37,11 +37,11 @@ switch ($data->type){
         }else{
             $group_href = $method_builder->getGroup($id);
             
-          if($text == "сайт" || $text == "site") {
+          if(mb_strtolower($text) == "сайт" || mb_strtolower($text == "site")) {
               $message->sendMessage($id, $group_href);
               break;
           } else {
-              $flag = $method_builder->currentweektype();
+              $flag = $method_builder->currentWeekType();
               $request = $method_builder->CheckBody($id, $text, $group, $flag);
               $message->sendMessage($id, $request);
             }

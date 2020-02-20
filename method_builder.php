@@ -6,7 +6,7 @@ require("LImageHandler.php");
 
 Class Method_builder{
 
-    public function extractTrueTrFromGarbage($s) {
+    public function extract_true_tr_from_garbage($s) {
         $tr_starting_pos = strpos($s, "<tr>");
         $tr_closing_pos = strpos($s, "</TR>");
         return substr($s, $tr_starting_pos + 4, $tr_closing_pos - $tr_starting_pos - 5);
@@ -59,7 +59,7 @@ Class Method_builder{
     }
 }
 
-    public function currentWeekType(){
+    public function currentweektype(){
         $today = date_create(date('Y-m-d'));
         $studyBeginning = date_create('2020-02-03'); // Дата начала учебы
         $interval = date_diff($today, $studyBeginning);
@@ -84,7 +84,7 @@ Class Method_builder{
                 if ($day == "Воскресенье"){
                     $answer = "&#9654;Совет дня\n\nСегодня выходной!)";
                 } else {
-                    $answer = "&#9654;Сейчас ".$flag." неделя\n\n".$this->printScheduleDay($day, $group, $flag);
+                    $answer = "&#9654;Сейчас ".$flag." неделя\n\n".$this->printSchedule_day($day, $group, $flag);
                 }
                 return $answer;
 
@@ -94,7 +94,7 @@ Class Method_builder{
                  if ($this->convertDayEng(date('l',$day)) == "Воскресенье"){
                     return "Завтра выходной!";
                 }
-                return  "&#9654;Завтра\n\n".$this->printScheduleDay($this->convertDayEng(date('l',$day)), $group, $flag);
+                return  "&#9654;Завтра\n\n".$this->printSchedule_day($this->convertDayEng(date('l',$day)), $group, $flag);
 
             case "на послезавтра":
             case "послезавтра":
@@ -102,29 +102,28 @@ Class Method_builder{
                  if ($this->convertDayEng(date('l',$day)) == "Воскресенье"){
                     return "Послезавтра выходной!";
                 }
-                return  "&#9654;Послезавтра\n\n".$this->printScheduleDay($this->convertDayEng(date('l',$day)), $group, $flag);
+                return  "&#9654;Послезавтра\n\n".$this->printSchedule_day($this->convertDayEng(date('l',$day)), $group, $flag);
           
             case "на неделю":
             case "неделя":
-                 return  "&#9654;Расписание " . $flag . " недели:\n\n".$this->printScheduleWeek($id, $group, $flag);
+                 return  "&#9654;Расписание " . $flag . " недели:\n\n".$this->printSchedule_week($id, $group, $flag);
           
             case "на 1 неделю":
             case "1 неделя":
             case "1":
-                    return  "&#9654;Расписание 1 недели:\n\n".$this->printScheduleWeek($id, $group, 1);
+                    return  "&#9654;Расписание 1 недели:\n\n".$this->printSchedule_week($id, $group, 1);
             
             case "на 2 неделю":
             case "2 неделя":
             case "2":
-                    return  "&#9654;Расписание 2 недели:\n\n".$this->printScheduleWeek($id, $group, 2);
+                    return  "&#9654;Расписание 2 недели:\n\n".$this->printSchedule_week($id, $group, 2);
 
            case "help":
             case "помощь":
             case "команды":
-                    return  "&#128204; Текущие команды:\n\n1&#8419;Моя группа Название группы\nУстанавливает текущую группу\n2&#8419;на день/на сегодня/сегодня\nВозвращает пары на текущий день\n3&#8419;на завтра/завтра\nВозвращает пары на завтра\n4&#8419;на послезавтра/послезавтра\nВозвразает пары на послезавтра\n5&#8419;на неделю/неделя\nВозвразает пары на текущую неделю\n6&#8419;на 1 неделю/1 неделя/1\nВозвразает пары на первую неделю\n7&#8419;на 2 неделю/2 неделя/2\nВозвразает пары на вторую неделю";
-
+          return  "&#128204; Текущие команды:\n\n1&#8419;Моя группа Название группы\n\nУстанавливает текущую группу\n\n2&#8419;на день/на сегодня/сегодня\n\nВозвращает пары на текущий день\n\n3&#8419;на завтра/завтра\n\nВозвращает пары на завтра\n\n4&#8419;на послезавтра/послезавтра\n\nВозвразает пары на послезавтра\n\n5&#8419;на неделю/неделя\n\nВозвразает пары на текущую неделю\n\n6&#8419;на 1 неделю/1 неделя/1\n\nВозвразает пары на первую неделю\n\n7&#8419;на 2 неделю/2 неделя/2\n\nВозвразает пары на вторую неделю";
             default:
-                    return "&#9999;Что я могу\n1&#8419;Узнай команды написав: help/помощь/команды\n2&#8419;Возвращать пары на сегодня/завтра/послезавтра\n3&#8419;Возвращать пары на неделю/на 1 неделю/на 2 неделю\n4&#8419;Моя группа (Название группы)\n5&#8419;Возвращать сайт\n6&#8419;&#128293;В разработке&#128293;";
+          return "&#9999;Что я могу\n1&#8419;Узнай команды написав: help/помощь/команды\n2&#8419;Возвращать пары на сегодня/завтра/послезавтра\n3&#8419;Возвращать пары на неделю/на 1 неделю/на 2 неделю\n4&#8419;Моя группа (Название группы)\n5&#8419;Возвращать сайт\n6&#8419;&#128293;В разработке&#128293;";
         }
     }
   
@@ -154,7 +153,7 @@ Class Method_builder{
 
         foreach($html->find('a') as $element){
           $tag_text = strip_tags($element->innertext);
-          if (mb_strtolower($tag_text) == mb_strtolower($group)) {
+          if (mb_strtolower($tag_text) == $group) {
               $group_href = $element->href;
               break;
           }
@@ -168,7 +167,7 @@ Class Method_builder{
       
         $query_builder = new Query_builder();
         $array = array(
-            'user_group' =>  $group,
+            'user_group' =>  $this->translit($group),
             'href_group' =>  $path_schedule
          );
         $query_builder->update("user", $array, "user_id = " .$id);
@@ -197,6 +196,13 @@ Class Method_builder{
         );
         $result = $query_builder->select("user", null, 'user_id = "' . $id . '" LIMIT 1');
         if($result){
+            $res = $query_builder->select("user", "user_id", 'user_group = "' . $result[0][1] . '" LIMIT 1');
+            $week = $query_builder->select("user", "first_week" . ",second_week", 'user_id = "' . $res[0][0] . '" LIMIT 1');
+            $array = array(
+                'first_week' =>  $week[0][0],
+                'second_week' =>  $week[0][1]
+            );
+            $query_builder->update("user", $array, "user_id = " .$id);
             return $result[0][1];
         }else{
             $query_builder->insert("user", $array);
@@ -225,14 +231,14 @@ Class Method_builder{
     return $result;
 }
   
-    public function printScheduleDay($day, $group, $flag){
-        $target = file_get_contents('./group/'.$this->translit($group).'/schedule.html');
+    public function printSchedule_day($day, $group, $flag){
+        $target = file_get_contents('./group/'.$group.'/schedule.html');
 
         $table = str_get_html($target);
         foreach($table->find('tr') as $element){
             $table_day = strip_tags($element->find('td p', 0));
             if ($day === $table_day) {
-                $pair = $this->extractTrueTrFromGarbage($element);
+                $pair = $this->extract_true_tr_from_garbage($element);
                 
                 if ($flag == 1) {
                     $week .= $this->entityIdentificationPair($pair);               
@@ -277,6 +283,7 @@ Class Method_builder{
   
   public function entityIdentificationPair_def($pair) {
         $result = "";
+        $search = 0;
         foreach(str_get_html($pair)->find('p') as $item) {
             if($search >= 1) {
                 if($item->innertext && trim($item->innertext) != '_') {
@@ -292,7 +299,7 @@ Class Method_builder{
         return $result;
     }
   
-  public function draWeek($table, $start, $finish, $name, $group) {
+  public function draw_week($table, $start, $finish, $name, $group) {
         $x = 0;
         $y = 0; 
         // Создаем экземпляр класса LImageHandler
@@ -320,7 +327,7 @@ Class Method_builder{
         foreach($table->find('tr') as $element) {
             
             if($passFirstRow >= $start && $passFirstRow <= $finish) {
-                $pair = $this->extractTrueTrFromGarbage($element);
+                $pair = $this->extract_true_tr_from_garbage($element);
 
                 $week = "\n" . str_replace("<br>", "\n", $this->entityIdentificationPair_def($pair));
 
@@ -329,7 +336,7 @@ Class Method_builder{
                     $imgObj = $ih->load($imagePath);
                     $y -= ceil(strlen($week) / 2);
                 } else {
-                    $imgObj = $ih->load("./group/IVTAPbd-41/" . $name . ".jpg");
+                    $imgObj = $ih->load("./group/" . $group . "/" . $name . ".jpg");
                     if($i == 1) {
                         $y = -ceil(strlen($week) / 2);
                     }
@@ -344,16 +351,16 @@ Class Method_builder{
                 }
                 $imgObj->text(strip_tags($week), $fontPath, $fontSize, $colorArray, $position[$i], $x, $y);
                 $i++;
-                $imgObj->save("./group/IVTAPbd-41/" . $name . ".jpg");
+                $imgObj->save("./group/" . $group . "/" . $name . ".jpg");
             }
             $passFirstRow++;
         }
-        $url = "http://a323177.mcdir.ru/group/" . $this->translit($group) . "/" . $name . ".jpg";
+        $url = "http://a323177.mcdir.ru/group/" . $group . "/" . $name . ".jpg";
         return $url;
     }
   
-    public function printScheduleWeek($id, $group, $flag) {
-          $target = file_get_contents('./group/'.$this->translit($group).'/schedule.html');
+    public function printSchedule_week($id, $group, $flag) {
+          $target = file_get_contents('./group/'.$group.'/schedule.html');
           $table = str_get_html($target);
           $query_builder = new Query_builder();
           if($flag == 1) {
@@ -370,7 +377,7 @@ Class Method_builder{
       if(empty($result)){
             return $result[0][0];
       }else { 
-             $url = $this->draWeek($table, $start, $finish, "week-" . $flag, $group);
+             $url = $this->draw_week($table, $start, $finish, "Schedule_week-" . $flag, $group);
         
               if($flag == 1) {
                     $array = array(

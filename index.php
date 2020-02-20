@@ -24,7 +24,7 @@ switch ($data->type){
         $group = $method_builder->checkGroup($id);
         $request = "";
         if(mb_strtolower(mb_substr($text, 0, 10, 'UTF-8')) == "моя группа"){
-            if($method_builder->setGroup($id, mb_substr($text, 11,strlen($text) - 11, 'UTF-8')) == 1) {
+            if($method_builder->setGroup($id, mb_strtolower(mb_substr($text, 11,strlen($text) - 11, 'UTF-8'))) == 1) {
                 $message->sendMessage($id, "&#9989;Ваша группа успешно установлена");
             } else {
                 $message->sendMessage($id, "&#9940;Ваша группа не найдена.\nЧтобы установить группу используйте команду:\n Моя группа (название группы)");
@@ -41,7 +41,7 @@ switch ($data->type){
               $message->sendMessage($id, $group_href);
               break;
           } else {
-              $flag = $method_builder->currentWeekType();
+              $flag = $method_builder->currentweektype();
               $request = $method_builder->CheckBody($id, $text, $group, $flag);
               $message->sendMessage($id, $request);
             }
